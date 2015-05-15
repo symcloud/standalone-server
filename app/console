@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+set_time_limit(0);
+
+(@include_once __DIR__ . '/../vendor/autoload.php');
+
+use Symcloud\Application\BlobStorage\Websocket\MessageComponent;
+use Symfony\Component\Console\Application;
+
+$messageComponent = new MessageComponent();
+
+$app = new Application();
+$app->add(new \Symcloud\Application\BlobStorage\Command\RunCommand($messageComponent));
+$app->run();

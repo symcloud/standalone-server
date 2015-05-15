@@ -1,0 +1,26 @@
+{
+    "name": "symcloud/blob-storage-server",
+    "require": {
+        "symfony/console": "~2.6",
+        "symfony/yaml": "~2.6",
+        "symfony/dependency-injection": "~2.6",
+        "symfony/config": "~2.6",
+        "cboden/ratchet": "0.3.*",
+        "react/zmq": "0.3.*",
+
+        "symcloud/distributed-storage": "dev-master",
+        "php-riak/riak-client": "@dev",
+        "php-riak/riak-client-pb": "@dev"
+    },
+    "authors": [
+        {
+            "name": "Johannes Wachter",
+            "email": "johannes.wachter@massiveart.at"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    }
+}
