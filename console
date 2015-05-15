@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+define('AUTOLOAD_PATH', __DIR__ . '/vendor/autoload.php');
+set_time_limit(0);
+
+if (!file_exists(AUTOLOAD_PATH)) {
+    fwrite(STDERR, 'You must set up the project dependencies.' . PHP_EOL);
+    exit(1);
+}
+
+require_once AUTOLOAD_PATH;
+
+$input = new \Symfony\Component\Console\Input\ArgvInput();
+$output = new \Symfony\Component\Console\Output\ConsoleOutput();
+
+$container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+$container->set('console.input', $input);
+$container->set('console.output', $output);
+
+$extension = new \Symcloud\Application\BlobStorage\DependencyInjection\BlobStorageExtension();
+
+$container->registerExtension($extension);
+
+$configLoader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader(
+    $container,
+    new \Symfony\Component\Config\FileLocator(__DIR__ . '/config')
+);
+$configLoader->load('config.yml');
+$container->compile();
+
+$container->get('console.application')->run($input, $output);
