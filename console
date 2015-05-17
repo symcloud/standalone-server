@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 define('AUTOLOAD_PATH', __DIR__ . '/vendor/autoload.php');
 set_time_limit(0);
 
@@ -20,6 +21,12 @@ $container->set('console.output', $output);
 $extension = new \Symcloud\Application\BlobStorage\DependencyInjection\BlobStorageExtension();
 
 $container->registerExtension($extension);
+$container->addCompilerPass(
+    new \Symcloud\Component\Standalone\ContainerCompiler\CommandsCompilerPass('console.application', 'console.command')
+);
+$container->addCompilerPass(
+    new \Symcloud\Component\Standalone\ContainerCompiler\RouteCompilerPass('application.server', 'application.route')
+);
 
 $configLoader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader(
     $container,

@@ -4,6 +4,7 @@ namespace Symcloud\Application\BlobStorage\Command;
 
 use Ratchet;
 use React;
+use Symcloud\Component\Standalone\Silex\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,36 +12,50 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RunCommand extends Command
 {
     /**
-     * @var Ratchet\MessageComponentInterface
+     * @var Application
      */
-    private $messageComponent;
+    private $app;
 
     /**
      * RunCommand constructor.
-     * @param Ratchet\MessageComponentInterface $messageComponent
+     * @param string $name
+     * @param Application $app
      */
-    public function __construct(Ratchet\MessageComponentInterface $messageComponent)
+    public function __construct($name, Application $app)
     {
-        parent::__construct('run');
+        parent::__construct($name);
 
-        $this->messageComponent = $messageComponent;
+        $this->app = $app;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
-        $this->setName('run')
-            ->addArgument('port', null, '', 9876);
+        $this->addArgument('port', null, '', 9876);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $port = $input->getArgument('port');
         $output->writeln('Connect to ws://localhost:' . $port);
 
         $loop = React\EventLoop\Factory::create();
-        $app = new Ratchet\App('localhost', $port, '127.0.0.1', $loop);
-        $app->route('/blob', $this->messageComponent, array('*'));
-        $app->route('/echo', new Ratchet\Server\EchoServer, array('*'));
-        $app->run();
+        $socket = new React\Socket\Server($loop);
+        $http = new React\Http\Server($socket);
+
+        $app = $this->app;
+        $http->on(
+            'request',
+            function ($request, $response) use ($app) {
+                $app($request, $response);
+            }
+        );
+        $socket->listen($port);
+        $loop->run();
     }
 }

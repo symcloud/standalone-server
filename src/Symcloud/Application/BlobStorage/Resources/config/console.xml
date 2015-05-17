@@ -3,8 +3,21 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="console.application" class="Symcloud\Application\BlobStorage\BlobStorageApplication">
+        <service id="console.application" class="Symcloud\Component\Standalone\StandaloneApplication">
             <argument type="string">%console.application.name%</argument>
+        </service>
+
+        <service id="console.command.run" class="Symcloud\Application\BlobStorage\Command\RunCommand">
+            <argument type="string">run</argument>
+            <argument type="service" id="application.server"/>
+
+            <tag name="console.command" default="true"/>
+        </service>
+
+        <service id="application.server" class="Symcloud\Component\Standalone\Silex\Application"/>
+
+        <service id="application.controller.index" class="Symcloud\Application\BlobStorage\Controller\TestController">
+            <tag name="application.route" method="get" pattern="/" action="index"/>
         </service>
     </services>
 </container>

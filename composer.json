@@ -5,12 +5,12 @@
         "symfony/yaml": "~2.6",
         "symfony/dependency-injection": "~2.6",
         "symfony/config": "~2.6",
-        "cboden/ratchet": "0.3.*",
-        "react/zmq": "0.3.*",
 
         "symcloud/distributed-storage": "dev-master",
         "php-riak/riak-client": "@dev",
-        "php-riak/riak-client-pb": "@dev"
+        "php-riak/riak-client-pb": "@dev",
+        "react/react": "0.4.*",
+        "silex/silex": "~1.2"
     },
     "authors": [
         {
